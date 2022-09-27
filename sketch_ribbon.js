@@ -24,206 +24,42 @@ var speed
 var letter_select, inp, inpText, letterCount
 var myText = []
 
-// SAVE BETA
-var gifLength = 250
-var gifStart, gifEnd
-var gifRecord = false
-var canvas
-
-var capturer = new CCapture({
-  framerate: 60,
-  format: 'gif',
-  workersPath: 'js/',
-  verbose: true,
-})
-
-function preload() {
-  font = loadFont('assets/IBMPlexMono-Regular.otf')
-}
-
-function setup() {
-  var p5SaveCanvas = createCanvas(windowWidth, windowHeight, WEBGL)
-  canvas = p5SaveCanvas.canvas
-
+setup = () => {
+  createCanvas(windowWidth, windowHeight, WEBGL)
   background(0)
-  //  frameRate(30);
-  //  noSmooth();
-  textFont(font)
-
-  inp = select('#textfield')
-
-  segmentSpaceSlider = createSlider(0, 100, 15)
-  segmentSpaceSlider.position(25, 30)
-  segmentSpaceSlider.style('width', '100px')
-  segmentCountSlider = createSlider(0, 50, 5)
-  segmentCountSlider.position(25, 60)
-  segmentCountSlider.style('width', '100px')
-  typeHeightSlider = createSlider(0, 100, 30)
-  typeHeightSlider.position(25, 90)
-  typeHeightSlider.style('width', '100px')
-  trackingSlider = createSlider(0, 100, 30)
-  trackingSlider.position(25, 120)
-  trackingSlider.style('width', '100px')
-  typeStrokeSlider = createSlider(0, 2, 1, 0.1)
-  typeStrokeSlider.position(25, 150)
-  typeStrokeSlider.style('width', '100px')
-
-  speedSlider = createSlider(0, 1, 0.1, 0.01)
-  speedSlider.position(25, 210)
-  speedSlider.style('width', '100px')
-
-  depthSlider = createSlider(0, 200, 30)
-  depthSlider.position(25, 270)
-  depthSlider.style('width', '100px')
-  middleStretchSlider = createSlider(0, 6, 0.5, 0.1)
-  middleStretchSlider.position(25, 300)
-  middleStretchSlider.style('width', '100px')
-  countSlider = createSlider(0, 10, 1)
-  countSlider.position(25, 330)
-  countSlider.style('width', '100px')
-  zSpaceSlider = createSlider(1, 3, 1, 0.01)
-  zSpaceSlider.position(25, 360)
-  zSpaceSlider.style('width', '100px')
-  xSpaceSlider = createSlider(0, 2, 0, 0.01)
-  xSpaceSlider.position(25, 390)
-  xSpaceSlider.style('width', '100px')
-  altCheck = createCheckbox('', false)
-  altCheck.position(50, 405)
-
-  scalerSlider = createSlider(0, 3, 1.6, 0.01)
-  scalerSlider.position(25, 440)
-  scalerSlider.style('width', '100px')
-
-  rotXslider = createSlider(-3.14, 3.14, -3.14, 0.01)
-  rotXslider.position(25, height - 170)
-  rotXslider.style('width', '100px')
-  rotYslider = createSlider(-3.14, 3.14, -3.14, 0.01)
-  rotYslider.position(25, height - 140)
-  rotYslider.style('width', '100px')
-  rotZslider = createSlider(-3.14, 3.14, -3.14, 0.01)
-  rotZslider.position(25, height - 110)
-  rotZslider.style('width', '100px')
-
-  inp0check = createCheckbox('', false)
-  inp0check.position(150, 57)
-  gradientCheck = createCheckbox('', true)
-  gradientCheck.position(150, 77)
-  bSideCheck = createCheckbox('', true)
-  bSideCheck.position(150, 97)
-  inp1 = createColorPicker('#0000ff')
-  inp1.position(170, 125)
-  inp1.style('width', '20px')
-  inp1check = createCheckbox('', true)
-  inp1check.position(150, 127)
-  inp2 = createColorPicker('#ff0000')
-  inp2.position(170, 155)
-  inp2.style('width', '20px')
-  inp2check = createCheckbox('', true)
-  inp2check.position(150, 157)
-  inp3 = createColorPicker('#ffff00')
-  inp3.position(170, 185)
-  inp3.style('width', '20px')
-  inp3check = createCheckbox('', true)
-  inp3check.position(150, 187)
-  inp4 = createColorPicker('#fff')
-  inp4.position(170, 215)
-  inp4.style('width', '20px')
-  inp4check = createCheckbox('', false)
-  inp4check.position(150, 217)
-  inp5 = createColorPicker('#000000')
-  inp5.position(170, 245)
-  inp5.style('width', '20px')
-  inp5check = createCheckbox('', false)
-  inp5check.position(150, 247)
-
-  bkgdColorPicker = createColorPicker('#ffffff')
-  bkgdColorPicker.position(152, 340)
-  bkgdColorPicker.style('width', '40px')
-  textColorPicker = createColorPicker('#000000')
-  textColorPicker.position(152, 295)
-  textColorPicker.style('width', '40px')
-
-  inp1check.changed(inp1checker)
-  inp2check.changed(inp2checker)
-  inp3check.changed(inp3checker)
-  inp4check.changed(inp4checker)
-  inp5check.changed(inp5checker)
-
-  basicSet = createButton('Basic')
-  basicSet.position(25, height - 60)
-  basicSet.mousePressed(basic)
-  streamerSet = createButton('Streamers')
-  streamerSet.position(75, height - 60)
-  streamerSet.mousePressed(streamer)
-  terraceSet = createButton('Terrace')
-  terraceSet.position(150, height - 60)
-  terraceSet.mousePressed(terrace)
-  linkSet = createButton('Link')
-  linkSet.position(210, height - 60)
-  linkSet.mousePressed(link)
-  seaSet = createButton('Sea')
-  seaSet.position(253, height - 60)
-  seaSet.mousePressed(sea)
-  riverSet = createButton('River')
-  riverSet.position(295, height - 60)
-  riverSet.mousePressed(river)
-
-  webRibbonSet = createButton('Web Art')
-  webRibbonSet.position(25, height - 35)
-  webRibbonSet.mousePressed(webRibbon)
-  primarySet = createButton('Primary')
-  primarySet.position(90, height - 35)
-  primarySet.mousePressed(primary)
-  snakeSet = createButton('Snake')
-  snakeSet.position(153, height - 35)
-  snakeSet.mousePressed(snake)
-  hotcoldSet = createButton('Hot/Cold')
-  hotcoldSet.position(208, height - 35)
-  hotcoldSet.mousePressed(hotcold)
-  trackSet = createButton('Track')
-  trackSet.position(280, height - 35)
-  trackSet.mousePressed(track)
-  track2Set = createButton('Track II')
-  track2Set.position(330, height - 35)
-  track2Set.mousePressed(track2)
-
-  saveLoopSet = createButton('Save Loop')
-  saveLoopSet.position(150, 20)
-  saveLoopSet.mousePressed(saveLoop)
-
-  inp0check.changed(inp0checker)
-  gradientCheck.changed(gradientChecker)
+  inp =
+    'HELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLO'
 }
 
-function draw() {
+draw = () => {
   ortho(-width / 2, width / 2, -height / 2, height / 2, -5000, 5000)
 
-  bkgdColor = color(bkgdColorPicker.value())
-  textColor = color(textColorPicker.value())
+  bkgdColor = color('#ffffff')
+  textColor = color('#000000')
   background(bkgdColor)
   noStroke()
   textSize(10)
-  inpText = String(inp.value())
+  inpText = String(inp)
   letterCount = inpText.length
-  segmentSpace = segmentSpaceSlider.value()
-  segmentCount = segmentCountSlider.value()
+  segmentSpace = 15
+  segmentCount = 15
   sinStep = PI / segmentCount
 
-  typeHeight = typeHeightSlider.value()
-  tracking = trackingSlider.value()
-  rotX = rotXslider.value()
-  rotY = rotYslider.value()
-  rotZ = rotZslider.value()
-  speed = speedSlider.value()
-  scaler = scalerSlider.value()
-  depth = depthSlider.value()
-  typeStroke = typeStrokeSlider.value()
+  typeHeight = 30
+  tracking = 30
+  rotX = 1.88
+  rotY = 0
+  rotZ = 0
+  speed = 0.1
+  scaler = 1.6
+  depth = 30
+  typeStroke = 1
   SA = typeStroke / 2
-  middleStretch = 0 //middleStretchSlider.value()
+  middleStretch = 0
 
-  count = countSlider.value()
-  zSpace = zSpaceSlider.value()
-  xSpace = xSpaceSlider.value()
+  count = 1
+  zSpace = 1
+  xSpace = 0
 
   segmentLength = segmentCount * segmentSpace
   radius = segmentLength / PI
@@ -233,8 +69,8 @@ function draw() {
   push()
   scale(scaler)
   rotateX(rotX)
-  rotateY(rotY)
-  rotateZ(rotZ + PI)
+  rotateY(rotY + PI)
+  rotateZ(rotZ)
 
   let yCrawl = ((letterCount + frameCount * speed) / segmentCount) * radius * 2
   let ribbonHeight = (letterCount / segmentCount) * radius * 2.25
@@ -256,10 +92,7 @@ function draw() {
       i < letterCount + frameCount * speed;
       i++
     ) {
-      // One loop goes through each rect
-
       x = 2 * segmentCount // 10
-      // one step is a count going 0 to 10
       step = i % x
 
       setGradient(i - frameCount * speed)
@@ -267,9 +100,8 @@ function draw() {
       letter_select = letterCount - round(i + 1 - frameCount * speed)
 
       // Jumps after a ribbon has one full walkthrough
-      jumper = floor(i / x)
+      jumper = Math.floor(i / x)
 
-      // while count smaller 5
       if (step <= segmentCount) {
         yCenter = jumper * radius * 4
         rot = step * sinStep
@@ -313,122 +145,15 @@ function draw() {
   pop()
 
   fill(textColor)
-  if (gifRecord == false) {
-    push()
-    translate(-width / 2, -height / 2)
-    text('Segment Space ' + segmentSpace, 25, 30)
-    text('Segment Count ' + segmentCount, 25, 60)
-    text('Type Height ' + typeHeight, 25, 90)
-    text('Tracking ' + tracking, 25, 120)
-    text('Type Stroke ' + typeStroke, 25, 150)
-
-    text('Speed ' + speed, 25, 210)
-
-    text('Ribbon Height ' + depth, 25, 270)
-    text('Ribbon Stretch ' + middleStretchSlider.value(), 25, 300)
-    text('Ribbon Count ' + count, 25, 330)
-    text('Ribbon Spacing ' + zSpace, 25, 360)
-    text('Ribbon Offset ' + xSpace, 25, 390)
-    text('Alternate ', 70, 420)
-    text('Scale ' + scalerSlider.value(), 25, 440)
-
-    text('Rotate X ' + rotX, 25, height - 170)
-    text('Rotate Y ' + rotY, 25, height - 140)
-    text('Rotate Z ' + rotZ, 25, height - 110)
-
-    text('PRESETS', 25, height - 70)
-
-    text('No stripes', 172, 70)
-    text('Gradient Mode', 172, 90)
-    text('B-Side Color', 172, 110)
-    text('A-Side', 205, 143)
-    text('BACKGROUND', 152, 335)
-    text('B-SIDE/TEXT', 152, 290)
-    translate(205, 165)
-    rotateZ(PI / 2)
-    text('Gradient Steps', 0, 0)
-    pop()
-  }
-  //  noLoop()
-}
-
-function inp1checker() {
-  inp2check.checked(false)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-  inpNumber = 1
-}
-
-function inp2checker() {
-  inp1check.checked(true)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-  if (this.checked()) {
-    inpNumber = 2
-  } else {
-    inpNumber = 1
-  }
-}
-
-function inp3checker() {
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp4check.checked(false)
-  inp5check.checked(false)
-  if (this.checked()) {
-    inpNumber = 3
-  } else {
-    inpNumber = 2
-  }
-}
-
-function inp4checker() {
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp5check.checked(false)
-  if (this.checked()) {
-    inpNumber = 4
-  } else {
-    inpNumber = 3
-  }
-}
-
-function inp5checker() {
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  if (this.checked()) {
-    inpNumber = 5
-  } else {
-    inpNumber = 4
-  }
-}
-
-function inp0checker() {
-  gradientCheck.checked(false)
-  bSideCheck.checked(false)
-  inp1check.checked(false)
-  inp2check.checked(false)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-}
-
-function gradientChecker() {
-  inp0check.checked(false)
 }
 
 function setGradient(switcher) {
   if (inpNumber == 5 || inpNumber == 6) {
-    let from = color(inp1.value())
-    let mid = color(inp2.value())
-    let mid2 = color(inp3.value())
-    let mid3 = color(inp4.value())
-    let to = color(inp5.value())
+    let from = color('#0000ff')
+    let mid = color('#ff0000')
+    let mid2 = color('#ffff00')
+    let mid3 = color('#fff')
+    let to = color('#000000')
     if (switcher <= letterCount / 4) {
       ribbonColor = lerpColor(from, mid, switcher / (letterCount / 4))
       strkColor = from
@@ -458,10 +183,10 @@ function setGradient(switcher) {
       strkColor = mid3
     }
   } else if (inpNumber == 4) {
-    let from = color(inp1.value())
-    let mid = color(inp2.value())
-    let mid2 = color(inp3.value())
-    let to = color(inp4.value())
+    let from = color('#0000ff')
+    let mid = color('#ff0000')
+    let mid2 = color('#ffff00')
+    let to = color('#fff')
     if (switcher <= letterCount / 3) {
       ribbonColor = lerpColor(from, mid, switcher / (letterCount / 3))
       strkColor = from
@@ -484,9 +209,9 @@ function setGradient(switcher) {
       strkColor = mid2
     }
   } else if (inpNumber == 3) {
-    let from = color(inp1.value())
-    let mid = color(inp2.value())
-    let to = color(inp3.value())
+    let from = color('#0000ff')
+    let mid = color('#ff0000')
+    let to = color('#ffff00')
     if (switcher <= letterCount / 2) {
       ribbonColor = lerpColor(from, mid, switcher / (letterCount / 2))
       strkColor = from
@@ -499,601 +224,1170 @@ function setGradient(switcher) {
       strkColor = mid
     }
   } else if (inpNumber == 2) {
-    let from = color(inp1.value())
-    let to = color(inp2.value())
+    let from = color('#0000ff')
+    let to = color('#ff0000')
     ribbonColor = lerpColor(from, to, switcher / letterCount)
     strkColor = from
   } else if (inpNumber == 1) {
-    let from = color(inp1.value())
-    let to = color(bkgdColorPicker.value())
+    let from = color('#0000ff')
+    let to = color('#ffffff')
     ribbonColor = lerpColor(from, to, switcher / letterCount)
     strkColor = to
   }
 }
 
-function reset() {
-  segmentSpaceSlider.value(10)
-  segmentCountSlider.value(20)
-  typeHeightSlider.value(30)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1)
-  speedSlider.value(0.1)
-  depthSlider.value(30)
-  middleStretchSlider.value(1)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1)
-
-  rotXslider.value(-2.1)
-  rotYslider.value(0.78)
-  rotZslider.value(0)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(false)
-  altCheck.checked(false)
-
-  inp1.value('#0000ff')
-  inp2.value('#ff0000')
-  inp3.value('#ffff00')
-  inp4.value('#ffffff')
-  inp5.value('#000000')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value(
-    ' Somewhere something incredible is waiting to be known. Somewhere something incredible is waiting to be known. '
-  )
-
-  inpNumber = 3
-  bkgdColorPicker.value('#212121')
-  textColorPicker.value('#ffffff')
-}
-
-function basic() {
-  reset()
-
-  segmentSpaceSlider.value(8)
-  segmentCountSlider.value(27)
-  typeHeightSlider.value(56)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1.4)
-  speedSlider.value(0.32)
-  depthSlider.value(30)
-  middleStretchSlider.value(0.2)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(2)
-
-  rotXslider.value(-1.87)
-  rotYslider.value(-0.56)
-  rotZslider.value(-0.56)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(true)
-  altCheck.checked(false)
-
-  inp1.value('#ff0000')
-  inp2.value('#FF9300')
-  inp3.value('#ffff00')
-  inp4.value('#00ff00')
-  inp5.value('#0000ff')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  inp5check.checked(true)
-
-  inp.value(
-    ' We have been taking into our mouths the bodies of dead birds. We have been taking into our mouths the bodies of dead birds. '
-  )
-
-  inpNumber = 5
-  bkgdColorPicker.value('#ffffff')
-  textColorPicker.value('#000000')
-}
-
-function river() {
-  reset()
-
-  segmentSpaceSlider.value(10)
-  segmentCountSlider.value(20)
-  typeHeightSlider.value(64)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1)
-  speedSlider.value(0.1)
-  depthSlider.value(74)
-  middleStretchSlider.value(0)
-
-  countSlider.value(7)
-  zSpaceSlider.value(1.11)
-  xSpaceSlider.value(0.63)
-  scalerSlider.value(1.32)
-
-  rotXslider.value(-1.82)
-  rotYslider.value(0.22)
-  rotZslider.value(-0.43)
-
-  inp0check.checked(true)
-  gradientCheck.checked(false)
-  bSideCheck.checked(false)
-  altCheck.checked(false)
-
-  inp1check.checked(false)
-  inp2check.checked(false)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value(
-    ' Somewhere something incredible is waiting to be known. Somewhere something incredible is waiting to be known. Somewhere something incredible is waiting to be known. '
-  )
-
-  inpNumber = 0
-  bkgdColorPicker.value('#0000ff')
-  textColorPicker.value('#ffffff')
-}
-
-function streamer() {
-  reset()
-  segmentSpaceSlider.value(23)
-  segmentCountSlider.value(22)
-  typeHeightSlider.value(25)
-  trackingSlider.value(40)
-  typeStrokeSlider.value(2)
-  speedSlider.value(0.4)
-  depthSlider.value(56)
-  middleStretchSlider.value(0)
-
-  countSlider.value(4)
-  zSpaceSlider.value(1.62)
-  xSpaceSlider.value(1.3)
-  scalerSlider.value(1.04)
-
-  rotXslider.value(-1.91)
-  rotYslider.value(0.56)
-  rotZslider.value(-0.53)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(true)
-  altCheck.checked(false)
-
-  inp1.value('#FFFC79')
-  inp2.value('#FF2F92')
-  inp3.value('#011993')
-  inp4.value('#0096FF')
-  inp5.value('#ffffff')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  inp5check.checked(false)
-
-  inp.value(
-    ' THE SEA IS A DESERT OF WAVES, A WILDERNESS OF WATER. THE SEA IS A DESERT OF WAVES, A WILDERNESS OF WATER. THE SEA IS A DESERT OF WAVES, A WILDERNESS OF WATER. '
-  )
-
-  inpNumber = 4
-  bkgdColorPicker.value('#212121')
-  textColorPicker.value('#ffffff')
-}
-
-function terrace() {
-  reset()
-  segmentSpaceSlider.value(14)
-  segmentCountSlider.value(17)
-  typeHeightSlider.value(30)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1)
-  speedSlider.value(0.3)
-  depthSlider.value(40)
-  middleStretchSlider.value(0.7)
-
-  countSlider.value(8)
-  zSpaceSlider.value(1.4)
-  xSpaceSlider.value(0.23)
-  scalerSlider.value(2)
-
-  rotXslider.value(-1.2)
-  rotYslider.value(0.14)
-  rotZslider.value(-0.95)
-
-  inp0check.checked(false)
-  gradientCheck.checked(false)
-  bSideCheck.checked(true)
-  altCheck.checked(false)
-
-  inp1.value('#ffffff')
-  inp1check.checked(true)
-  inp2check.checked(false)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value(
-    ' and sailed back over a year and in and out of weeks and through a day and sailed back over a year '
-  )
-
-  inpNumber = 1
-  bkgdColorPicker.value('#000000')
-  textColorPicker.value('#000000')
-}
-
-function link() {
-  reset()
-  segmentSpaceSlider.value(17)
-  segmentCountSlider.value(12)
-  typeHeightSlider.value(55)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1.5)
-  speedSlider.value(0.2)
-  depthSlider.value(45)
-  middleStretchSlider.value(0)
-
-  countSlider.value(8)
-  zSpaceSlider.value(2.1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(0.96)
-
-  rotXslider.value(-2.18)
-  rotYslider.value(-0.09)
-  rotZslider.value(-1.13)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(true)
-  altCheck.checked(true)
-
-  inp1.value('#0096FF')
-  inp2.value('#FF0000')
-  inp3.value('#FFFF00')
-  inp4.value('#000000')
-  inp5.value('#ffffff')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value('       WHICH CAME FIRST - THE OBSERVER OR THE PARTICLE?       ')
-
-  inpNumber = 3
-  bkgdColorPicker.value('#ffffff')
-  textColorPicker.value('#000000')
-}
-
-function sea() {
-  reset()
-  segmentSpaceSlider.value(11)
-  segmentCountSlider.value(20)
-  typeHeightSlider.value(80)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1.5)
-  speedSlider.value(0.4)
-  depthSlider.value(60)
-  middleStretchSlider.value(0)
-
-  countSlider.value(9)
-  zSpaceSlider.value(1.95)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1)
-
-  rotXslider.value(-1.25)
-  rotYslider.value(-0.44)
-  rotZslider.value(-0.58)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(true)
-  altCheck.checked(true)
-
-  inp1.value('#FFD479')
-  inp2.value('#73FDFF')
-  inp3.value('#0096FF')
-  inp4.value('#FF8AD8')
-  inp5.value('#ff0000')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  inp5check.checked(true)
-
-  inp.value(
-    ' Somewhere something Somewhere something Somewhere something Somewhere something Somewhere something Somewhere something '
-  )
-
-  inpNumber = 5
-  bkgdColorPicker.value('#000000')
-  textColorPicker.value('#005493')
-}
-
-function webRibbon() {
-  reset()
-  segmentSpaceSlider.value(10)
-  segmentCountSlider.value(25)
-  typeHeightSlider.value(30)
-  trackingSlider.value(30)
-  typeStrokeSlider.value(1)
-  speedSlider.value(0.4)
-  depthSlider.value(101)
-  middleStretchSlider.value(0.9)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1)
-
-  rotXslider.value(2.04)
-  rotYslider.value(-2.58)
-  rotZslider.value(0.11)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(false)
-  altCheck.checked(false)
-
-  inp1.value('#0000ff')
-  inp2.value('#ffff00')
-  inp3.value('#ff0000')
-  inp4.value('#000000')
-  inp5.value('#ffffff')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  inp5check.checked(true)
-
-  inp.value(
-    '                                                                                                                                                                                                            '
-  )
-
-  inpNumber = 5
-  bkgdColorPicker.value('#929292')
-  textColorPicker.value('#ffffff')
-}
-
-function primary() {
-  reset()
-  segmentSpaceSlider.value(10)
-  segmentCountSlider.value(20)
-  typeHeightSlider.value(0)
-  trackingSlider.value(0)
-  typeStrokeSlider.value(2)
-  speedSlider.value(0.2)
-  depthSlider.value(111)
-  middleStretchSlider.value(1.1)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1.25)
-
-  rotXslider.value(-0.6)
-  rotYslider.value(-0.66)
-  rotZslider.value(0.94)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(false)
-  altCheck.checked(false)
-
-  inp1.value('#ffffff')
-  inp2.value('#0000ff')
-  inp3.value('#ff0000')
-  inp4.value('#ffff00')
-  inp5.value('#ffffff')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  inp5check.checked(true)
-
-  inp.value(
-    '======================================================================================================================================================================================================'
-  )
-
-  inpNumber = 5
-  bkgdColorPicker.value('#ffffff')
-  textColorPicker.value('#000000')
-}
-
-function snake() {
-  reset()
-  segmentSpaceSlider.value(6)
-  segmentCountSlider.value(33)
-  typeHeightSlider.value(0)
-  trackingSlider.value(0)
-  typeStrokeSlider.value(1)
-  speedSlider.value(0.5)
-  depthSlider.value(85)
-  middleStretchSlider.value(1)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1)
-
-  rotXslider.value(-0.58)
-  rotYslider.value(-0.52)
-  rotZslider.value(0.03)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(true)
-  altCheck.checked(false)
-
-  inp1.value('#000000')
-  inp2.value('#ffffff')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value(
-    '======================================================================================================================================================================================================'
-  )
-
-  inpNumber = 2
-  bkgdColorPicker.value('#000000')
-  textColorPicker.value('#000000')
-}
-
-function hotcold() {
-  reset()
-  segmentSpaceSlider.value(7)
-  segmentCountSlider.value(25)
-  typeHeightSlider.value(0)
-  trackingSlider.value(0)
-  typeStrokeSlider.value(0)
-  speedSlider.value(0.2)
-  depthSlider.value(80)
-  middleStretchSlider.value(1.2)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1)
-
-  rotXslider.value(-1.06)
-  rotYslider.value(0.92)
-  rotZslider.value(-0.42)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(false)
-  altCheck.checked(false)
-
-  inp1.value('#000000')
-  inp2.value('#011993')
-  inp3.value('#EF577A')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value(
-    '                                                                                                                                                                '
-  )
-
-  inpNumber = 3
-  bkgdColorPicker.value('#000000')
-  textColorPicker.value('#000000')
-}
-
-function track() {
-  reset()
-  segmentSpaceSlider.value(9)
-  segmentCountSlider.value(19)
-  typeHeightSlider.value(0)
-  trackingSlider.value(100)
-  typeStrokeSlider.value(2)
-  speedSlider.value(0.1)
-  depthSlider.value(106)
-  middleStretchSlider.value(1.2)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(1.03)
-
-  rotXslider.value(0.93)
-  rotYslider.value(0.24)
-  rotZslider.value(-2.19)
-
-  inp0check.checked(false)
-  gradientCheck.checked(true)
-  bSideCheck.checked(true)
-  altCheck.checked(false)
-
-  inp1.value('#000000')
-  inp2.value('#DF2519')
-  inp3.value('#DCB76E')
-  inp4.value('#094D83')
-  inp5.value('#000000')
-  inp1check.checked(true)
-  inp2check.checked(true)
-  inp3check.checked(true)
-  inp4check.checked(true)
-  inp5check.checked(true)
-
-  inp.value(
-    '///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////'
-  )
-
-  inpNumber = 5
-  bkgdColorPicker.value('#000000')
-  textColorPicker.value('#000000')
-}
-
-function track2() {
-  reset()
-  segmentSpaceSlider.value(13)
-  segmentCountSlider.value(19)
-  typeHeightSlider.value(0)
-  trackingSlider.value(100)
-  typeStrokeSlider.value(2)
-  speedSlider.value(0.1)
-  depthSlider.value(168)
-  middleStretchSlider.value(1.2)
-
-  countSlider.value(1)
-  zSpaceSlider.value(1)
-  xSpaceSlider.value(0)
-  scalerSlider.value(2.1)
-
-  rotXslider.value(-2.15)
-  rotYslider.value(0.56)
-  rotZslider.value(-2.19)
-
-  inp0check.checked(false)
-  gradientCheck.checked(false)
-  bSideCheck.checked(false)
-  altCheck.checked(false)
-
-  inp1.value('#000000')
-  inp1check.checked(true)
-  inp2check.checked(false)
-  inp3check.checked(false)
-  inp4check.checked(false)
-  inp5check.checked(false)
-
-  inp.value(
-    '///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////'
-  )
-
-  inpNumber = 1
-  bkgdColorPicker.value('#FF7E79')
-  textColorPicker.value('#ffffff')
-}
-
-function saveLoop() {
-  var newSpeed =
-    (2 * segmentCount + 2 * segmentCount * middleStretch) / gifLength
-  print(newSpeed)
-
-  if (
-    confirm(
-      'Click OK to generate your gif.\nThe process will take a minute. Be patient, plz!'
-    )
-  ) {
-    speedSlider.value(newSpeed)
-    gifStart = frameCount
-    print(gifStart)
-    gifEnd = gifStart + gifLength
-    print(gifEnd)
-    gifRecord = true
-  } else {
-    gifRecord = false
+function keyboardEngine(sketch) {
+  c1 = inpText.charAt(letter_select)
+
+  if (c1 == 'A' || c1 == 'a') {
+    letter_A()
+  } else if (c1 == 'B' || c1 == 'b') {
+    letter_B()
+  } else if (c1 == 'C' || c1 == 'c') {
+    letter_C()
+  } else if (c1 == 'D' || c1 == 'd') {
+    letter_D()
+  } else if (c1 == 'E' || c1 == 'e') {
+    letter_E(sketch)
+  } else if (c1 == 'F' || c1 == 'f') {
+    letter_F()
+  } else if (c1 == 'G' || c1 == 'g') {
+    letter_G()
+  } else if (c1 == 'H' || c1 == 'h') {
+    letter_H(sketch)
+  } else if (c1 == 'I' || c1 == 'i') {
+    letter_I()
+  } else if (c1 == 'J' || c1 == 'j') {
+    letter_J()
+  } else if (c1 == 'K' || c1 == 'k') {
+    letter_K()
+  } else if (c1 == 'L' || c1 == 'l') {
+    letter_L(sketch)
+  } else if (c1 == 'M' || c1 == 'm') {
+    letter_M()
+  } else if (c1 == 'N' || c1 == 'n') {
+    letter_N()
+  } else if (c1 == 'O' || c1 == 'o') {
+    letter_O(sketch)
+  } else if (c1 == 'P' || c1 == 'p') {
+    letter_P()
+  } else if (c1 == 'Q' || c1 == 'q') {
+    letter_Q()
+  } else if (c1 == 'R' || c1 == 'r') {
+    letter_R()
+  } else if (c1 == 'S' || c1 == 's') {
+    letter_S()
+  } else if (c1 == 'T' || c1 == 't') {
+    letter_T()
+  } else if (c1 == 'U' || c1 == 'u') {
+    letter_U()
+  } else if (c1 == 'V' || c1 == 'v') {
+    letter_V()
+  } else if (c1 == 'W' || c1 == 'w') {
+    letter_W()
+  } else if (c1 == 'X' || c1 == 'x') {
+    letter_X()
+  } else if (c1 == 'Y' || c1 == 'y') {
+    letter_Y()
+  } else if (c1 == 'Z' || c1 == 'z') {
+    letter_Z()
+  } else if (c1 == '_') {
+    letter_underscore()
+  } else if (c1 == '-') {
+    letter_dash()
+  } else if (c1 == '?') {
+    letter_question()
+  } else if (c1 == '.') {
+    letter_period()
+  } else if (c1 == '!') {
+    letter_exclaim()
+  } else if (c1 == ' ') {
+    letter_space()
+  } else if (c1 == ':') {
+    letter_colon()
+  } else if (c1 == ';') {
+    letter_semicolon()
+  } else if (c1 == ',') {
+    letter_comma()
+  } else if (c1 == '/') {
+    letter_slash()
+  } else if (c1 == '&') {
+    letter_amp()
+  } else if (c1 == '1') {
+    one()
+  } else if (c1 == '2') {
+    two()
+  } else if (c1 == '3') {
+    three()
+  } else if (c1 == '4') {
+    four()
+  } else if (c1 == '5') {
+    five()
+  } else if (c1 == '6') {
+    six()
+  } else if (c1 == '7') {
+    seven()
+  } else if (c1 == '8') {
+    eight()
+  } else if (c1 == '9') {
+    nine()
+  } else if (c1 == '0') {
+    zero()
+  } else if (c1 == '"') {
+    double_quote()
+  } else if (c1 == "'") {
+    single_quote()
+  } else if (c1 == '#') {
+    hash()
+  } else if (c1 == '$') {
+    cash()
+  } else if (c1 == '%') {
+    percentage()
+  } else if (c1 == '=') {
+    equal()
+  } else if (c1 == '+') {
+    plus()
+  } else if (c1 == '*') {
+    asterisk()
+  } else if (c1 == '@') {
+    at()
   }
+  //  }
 }
+/////////////////////////////////////////////////// LETTERS
+
+function letter_A() {
+  push()
+
+  beginShape()
+  vertex(0, typeY)
+  vertex(0, typeY - SA)
+
+  vertex(typeX / 2 - typeStroke / 4, 0)
+  vertex(typeX / 2 + typeStroke / 4, 0)
+
+  vertex(typeX, typeY - SA)
+  vertex(typeX, typeY)
+  endShape()
+
+  ang = atan(typeX / 2 / typeY)
+  angX = tan(ang) * (typeY / 3)
+
+  line(
+    angX - SA / 2,
+    (21 * typeY) / 28,
+    typeX - angX + SA / 2,
+    (21 * typeY) / 28
+  )
+  pop()
+}
+
+function letter_B() {
+  beginShape()
+  vertex(0, 0)
+  vertex(typeX / 2, 0)
+  bezierVertex(
+    (3 * typeX) / 4,
+    0,
+    (26 * typeX) / 28,
+    (2 * typeY) / 28,
+    (26 * typeX) / 28,
+    (6 * typeY) / 28
+  )
+  vertex((26 * typeX) / 28, (7 * typeY) / 28)
+  bezierVertex(
+    (26 * typeX) / 28,
+    (11 * typeY) / 28,
+    (22 * typeX) / 28,
+    (13 * typeY) / 28,
+    typeX / 2,
+    (13 * typeY) / 28
+  )
+  vertex(0, (13 * typeY) / 28)
+  endShape()
+  beginShape()
+  vertex(0, (13 * typeY) / 28)
+  vertex(typeX / 2, (13 * typeY) / 28)
+  bezierVertex(
+    (3 * typeX) / 4,
+    (13 * typeY) / 28,
+    typeX,
+    (15 * typeY) / 28,
+    typeX,
+    (20 * typeY) / 28
+  )
+  vertex(typeX, (3 * typeY) / 4)
+  bezierVertex(typeX, (7 * typeY) / 8, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  vertex(0, typeY)
+  vertex(0, 0)
+  endShape()
+}
+
+function letter_C() {
+  beginShape()
+  vertex(typeX, (3 * typeY) / 4)
+  bezierVertex(typeX, (7 * typeY) / 8, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, typeY / 3)
+  bezierVertex(0, typeY / 6, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 8, typeX, typeY / 4)
+  endShape()
+}
+
+function letter_D() {
+  beginShape()
+  vertex(0, 0)
+  vertex(typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 6, typeX, typeY / 3)
+  vertex(typeX, (2 * typeY) / 3)
+  bezierVertex(typeX, (5 * typeY) / 6, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  vertex(0, typeY)
+  vertex(0, 0)
+  endShape()
+}
+
+function letter_E(sketch) {
+  line(0, 0, typeX, 0)
+  line(0, 0, 0, typeY)
+  line(0, typeY, typeX, typeY)
+  line(0, (15 * typeY) / 28, (7 * typeX) / 8, (15 * typeY) / 28)
+}
+
+function letter_F() {
+  line(0, 0, typeX, 0)
+  line(0, 0, 0, typeY)
+  line(0, (15 * typeY) / 28, (7 * typeX) / 8, (15 * typeY) / 28)
+}
+
+function letter_G() {
+  beginShape()
+  vertex(typeX, (3 * typeY) / 4)
+  bezierVertex(typeX, (7 * typeY) / 8, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, typeY / 3)
+  bezierVertex(0, typeY / 6, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 8, typeX, typeY / 4)
+  endShape()
+
+  line(typeX, typeY, typeX, (15 * typeY) / 28)
+  line((5 * typeX) / 8, (15 * typeY) / 28, typeX, (15 * typeY) / 28)
+}
+
+function letter_H(sketch) {
+  line(0, 0, 0, typeY)
+  line(typeX, 0, typeX, typeY)
+  line(0, typeY / 2, typeX, typeY / 2)
+}
+
+function letter_I() {
+  line(0, 0, typeX, 0)
+  line(0, typeY, typeX, typeY)
+  line(typeX / 2, 0, typeX / 2, typeY)
+}
+
+function letter_J() {
+  beginShape()
+  vertex(typeX / 2, 0)
+  vertex(typeX, 0)
+  vertex(typeX, (2 * typeY) / 3)
+  bezierVertex(typeX, (5 * typeY) / 6, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  endShape()
+}
+
+function letter_K() {
+  line(0, 0, 0, typeY)
+  beginShape()
+  vertex(0, (2 * typeY) / 3)
+  vertex((27 * typeX) / 28, SA)
+  vertex((27 * typeX) / 28, 0)
+  endShape()
+
+  ang = atan((2 * typeY) / 3 / typeX)
+  angX = ((13 / 28) * typeY) / tan(ang)
+
+  beginShape()
+  vertex(typeX - angX, (13 / 28) * typeY)
+  vertex(typeX, typeY - SA)
+  vertex(typeX, typeY)
+  endShape()
+}
+
+function letter_L(sketch) {
+  line(0, 0, 0, typeY)
+  line(0, typeY, typeX, typeY)
+}
+
+function letter_M() {
+  beginShape()
+  vertex(0, typeY)
+  vertex(0, 0)
+
+  vertex(typeX / 2, (22 * typeY) / 28 - SA)
+
+  vertex(typeX, 0)
+  vertex(typeX, typeY)
+  endShape()
+}
+
+function letter_N() {
+  beginShape()
+  vertex(0, typeY)
+  vertex(0, 0)
+  vertex(typeX, typeY)
+  vertex(typeX, 0)
+  endShape()
+}
+
+function letter_O(sketch) {
+  beginShape()
+  vertex(typeX, typeY / 3)
+  vertex(typeX, (2 * typeY) / 3)
+  bezierVertex(typeX, (5 * typeY) / 6, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, typeY / 3)
+  bezierVertex(0, typeY / 6, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 6, typeX, typeY / 3)
+  endShape()
+}
+
+function letter_P() {
+  beginShape()
+  vertex(0, typeY)
+  vertex(0, 0)
+  vertex(typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 8, typeX, typeY / 4)
+  vertex(typeX, (8 * typeY) / 28)
+  bezierVertex(
+    typeX,
+    (8 * typeY) / 28 + typeY / 8,
+    (5 * typeX) / 6,
+    (15 * typeY) / 28,
+    typeX / 2,
+    (15 * typeY) / 28
+  )
+  vertex(0, (15 * typeY) / 28)
+  endShape()
+}
+
+function letter_Q() {
+  beginShape()
+  vertex(typeX, typeY / 3)
+  vertex(typeX, (2 * typeY) / 3)
+  bezierVertex(typeX, (5 * typeY) / 6, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, typeY / 3)
+  bezierVertex(0, typeY / 6, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 6, typeX, typeY / 3)
+  endShape()
+
+  beginShape()
+  vertex(typeX / 2, (15 * typeY) / 28)
+  vertex(typeX, typeY - SA)
+  vertex(typeX, typeY)
+  endShape()
+}
+
+function letter_R() {
+  beginShape()
+  vertex(0, typeY)
+  vertex(0, 0)
+  vertex(typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 8, typeX, typeY / 4)
+  vertex(typeX, (8 * typeY) / 28)
+  bezierVertex(
+    typeX,
+    (8 * typeY) / 28 + typeY / 8,
+    (5 * typeX) / 6,
+    (15 * typeY) / 28,
+    typeX / 2,
+    (15 * typeY) / 28
+  )
+  vertex(0, (15 * typeY) / 28)
+  endShape()
+
+  beginShape()
+  vertex(typeX / 2, (15 * typeY) / 28)
+
+  vertex(typeX - SA, typeY - SA)
+  vertex(typeX - SA, typeY)
+  endShape()
+}
+
+function letter_S() {
+  beginShape()
+  vertex((27 * typeX) / 28, typeY / 4)
+  vertex((27 * typeX) / 28, (13 * typeY) / 56)
+  bezierVertex(
+    (27 * typeX) / 28,
+    (4 * typeY) / 28,
+    (7 * typeX) / 8,
+    0,
+    typeX / 2,
+    0
+  )
+  bezierVertex(
+    typeX / 4,
+    0,
+    typeX / 28,
+    (2 * typeY) / 28,
+    typeX / 28,
+    (11 * typeY) / 56
+  )
+  vertex(typeX / 28, (6 * typeY) / 28)
+  bezierVertex(
+    typeX / 28,
+    (17 * typeY) / 56,
+    typeX / 8,
+    (21 * typeY) / 56,
+    typeX / 3,
+    (12 * typeY) / 28
+  )
+  vertex((20 * typeX) / 28, (29 * typeY) / 56)
+  bezierVertex(
+    (26 * typeX) / 28,
+    (16 * typeY) / 28,
+    typeX,
+    (18 * typeY) / 28,
+    typeX,
+    (41 * typeY) / 56
+  )
+  vertex(typeX, (3 * typeY) / 4)
+  bezierVertex(
+    typeX,
+    (26 * typeY) / 28,
+    (22 * typeX) / 28,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(typeX / 4, typeY, 0, (53 * typeY) / 56, 0, (3 * typeY) / 4)
+  vertex(0, (41 * typeY) / 56)
+  endShape()
+}
+
+function letter_T() {
+  line(0, 0, typeX, 0)
+  line(typeX / 2, 0, typeX / 2, typeY)
+}
+
+function letter_U() {
+  beginShape()
+  vertex(typeX, 0)
+  vertex(typeX, (2 * typeY) / 3)
+  bezierVertex(typeX, (5 * typeY) / 6, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, 0)
+  endShape()
+}
+
+function letter_V() {
+  beginShape()
+  vertex(0, 0)
+  vertex(0, SA)
+
+  vertex(typeX / 2 - SA / 2, typeY)
+  vertex(typeX / 2 + SA / 2, typeY)
+
+  vertex(typeX, SA)
+  vertex(typeX, 0)
+  endShape()
+}
+
+function letter_W() {
+  beginShape()
+  vertex(0, 0)
+  vertex(0, SA)
+
+  vertex(typeX / 4 - SA / 2, typeY)
+  vertex(typeX / 4 + SA / 2, typeY)
+
+  vertex(typeX / 2 - SA / 2, (8 * typeY) / 28)
+  vertex(typeX / 2 + SA / 2, (8 * typeY) / 28)
+
+  vertex((3 * typeX) / 4 - SA / 2, typeY)
+  vertex((3 * typeX) / 4 + SA / 2, typeY)
+
+  vertex(typeX, SA)
+  vertex(typeX, 0)
+  endShape()
+}
+
+function letter_X() {
+  beginShape()
+  vertex(0, 0)
+  vertex(0, SA)
+  vertex(typeX, typeY - SA)
+  vertex(typeX, typeY)
+  endShape()
+  beginShape()
+  vertex(typeX, 0)
+  vertex(typeX, SA)
+  vertex(0, typeY - SA)
+  vertex(0, typeY)
+  endShape()
+}
+
+function letter_Y() {
+  beginShape()
+  vertex(0, 0)
+  vertex(0, SA)
+  vertex(typeX / 2, (2 * typeY) / 3)
+  vertex(typeX, SA)
+  vertex(typeX, 0)
+  endShape()
+
+  line(typeX / 2, (2 * typeY) / 3, typeX / 2, typeY)
+}
+
+function letter_Z() {
+  line(0, 0, typeX, 0)
+  line(0, typeY, typeX, typeY)
+
+  beginShape()
+  vertex(typeX, 0)
+  vertex(typeX, SA)
+  vertex(0, typeY - SA)
+  vertex(0, typeY)
+  endShape()
+}
+
+function one() {
+  beginShape()
+  vertex(typeX / 8, (6 / 28) * typeY)
+  vertex(typeX / 2, 0)
+  vertex(typeX / 2, typeY)
+  endShape()
+
+  line(0, typeY, typeX, typeY)
+}
+
+function two() {
+  beginShape()
+  vertex(0, typeY / 4)
+  bezierVertex(0, typeY / 8, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, SA, typeX, typeY / 8, typeX, typeY / 4)
+  bezierVertex(typeX, (5 * typeY) / 8, 0, (2 * typeY) / 3, 0, typeY)
+  vertex(typeX, typeY)
+  endShape()
+}
+
+function three() {
+  beginShape()
+  vertex(0, 0)
+  vertex(typeX, 0)
+  vertex((typeX * 12) / 28, (typeY * 10) / 28)
+  vertex((typeX * 12) / 28, (typeY * 10) / 28)
+  bezierVertex(
+    (24 / 28) * typeX,
+    (typeY * 10) / 28,
+    typeX,
+    (15 / 28) * typeY,
+    typeX,
+    (19 / 28) * typeY
+  )
+  vertex(typeX, (3 / 4) * typeY)
+  bezierVertex(
+    typeX,
+    (24 / 28) * typeY,
+    (24 / 28) * typeX,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(
+    (4 / 28) * typeX,
+    typeY,
+    0,
+    (24 / 28) * typeY,
+    0,
+    (3 / 4) * typeY
+  )
+  endShape()
+}
+
+function four() {
+  beginShape()
+  vertex(typeX / 3, 0)
+  vertex(typeX / 3, SA)
+  vertex(0, (2 * typeY) / 3)
+  vertex(typeX, (2 * typeY) / 3)
+  endShape()
+  line((21 / 28) * typeX, 0, (21 / 28) * typeX, typeY)
+}
+
+function five() {
+  beginShape()
+  vertex((typeX * 7) / 8, 0)
+  vertex((typeX * 2) / 28, 0)
+  vertex((typeX * 2) / 28, (11 / 28) * typeY)
+  vertex(typeX / 2, (11 / 28) * typeY)
+  bezierVertex(
+    (24 / 28) * typeX,
+    (11 / 28) * typeY,
+    typeX,
+    (15 / 28) * typeY,
+    typeX,
+    (19 / 28) * typeY
+  )
+  vertex(typeX, (3 / 4) * typeY)
+  bezierVertex(
+    typeX,
+    (24 / 28) * typeY,
+    (24 / 28) * typeX,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(
+    (4 / 28) * typeX,
+    typeY,
+    0,
+    (24 / 28) * typeY,
+    0,
+    (3 / 4) * typeY
+  )
+  endShape()
+}
+
+function six() {
+  beginShape()
+  vertex((1 / 2) * typeX, 0)
+  quadraticVertex(0, (1 / 4) * typeY, 0, (3 / 4) * typeY)
+  endShape()
+  beginShape()
+  vertex(typeX / 2, (12 / 28) * typeY)
+  bezierVertex(
+    (24 / 28) * typeX,
+    (12 / 28) * typeY,
+    typeX,
+    (16 / 28) * typeY,
+    typeX,
+    (20 / 28) * typeY
+  )
+  vertex(typeX, (3 / 4) * typeY)
+  bezierVertex(
+    typeX,
+    (24 / 28) * typeY,
+    (24 / 28) * typeX,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(
+    (4 / 28) * typeX,
+    typeY,
+    0,
+    (24 / 28) * typeY,
+    0,
+    (3 / 4) * typeY
+  )
+  vertex(0, (20 / 28) * typeY)
+  bezierVertex(
+    0,
+    (16 / 28) * typeY,
+    (4 / 28) * typeX,
+    (12 / 28) * typeY,
+    typeX / 2,
+    (12 / 28) * typeY
+  )
+  endShape()
+}
+
+function seven() {
+  beginShape()
+  vertex(0, 0)
+  vertex(typeX, 0)
+  vertex(typeX / 2, typeY - SA)
+  vertex(typeX / 2, typeY)
+  endShape()
+}
+
+function eight() {
+  beginShape()
+  vertex(typeX / 2, 0)
+  bezierVertex(
+    (23 * typeX) / 28,
+    0,
+    (27 * typeX) / 28,
+    (3 * typeY) / 28,
+    (27 * typeX) / 28,
+    (6 * typeY) / 28
+  )
+  vertex((27 * typeX) / 28, typeY / 4)
+  bezierVertex(
+    (27 * typeX) / 28,
+    (10 * typeY) / 28,
+    (23 * typeX) / 28,
+    (13 * typeY) / 28,
+    typeX / 2,
+    (13 * typeY) / 28
+  )
+  bezierVertex(
+    (5 * typeX) / 28,
+    (13 * typeY) / 28,
+    typeX / 28,
+    (10 * typeY) / 28,
+    typeX / 28,
+    typeY / 4
+  )
+  vertex(typeX / 28, (6 * typeY) / 28)
+  bezierVertex(typeX / 28, (3 * typeY) / 28, (5 * typeX) / 28, 0, typeX / 2, 0)
+  endShape()
+  beginShape()
+  vertex(typeX / 2, (13 / 28) * typeY)
+  bezierVertex(
+    (24 / 28) * typeX,
+    (13 / 28) * typeY,
+    typeX,
+    (16 / 28) * typeY,
+    typeX,
+    (20 / 28) * typeY
+  )
+  vertex(typeX, (3 / 4) * typeY)
+  bezierVertex(
+    typeX,
+    (24 / 28) * typeY,
+    (24 / 28) * typeX,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(
+    (4 / 28) * typeX,
+    typeY,
+    0,
+    (24 / 28) * typeY,
+    0,
+    (3 / 4) * typeY
+  )
+  vertex(0, (20 / 28) * typeY)
+  bezierVertex(
+    0,
+    (16 / 28) * typeY,
+    (4 / 28) * typeX,
+    (13 / 28) * typeY,
+    typeX / 2,
+    (13 / 28) * typeY
+  )
+  endShape()
+}
+
+function nine() {
+  push()
+  translate(typeX, typeY)
+  rotate(PI)
+
+  beginShape()
+  vertex((1 / 2) * typeX, 0)
+  quadraticVertex(0, (1 / 4) * typeY, 0, (3 / 4) * typeY)
+  endShape()
+  beginShape()
+  vertex(typeX / 2, (12 / 28) * typeY)
+  bezierVertex(
+    (24 / 28) * typeX,
+    (12 / 28) * typeY,
+    typeX,
+    (16 / 28) * typeY,
+    typeX,
+    (20 / 28) * typeY
+  )
+  vertex(typeX, (3 / 4) * typeY)
+  bezierVertex(
+    typeX,
+    (24 / 28) * typeY,
+    (24 / 28) * typeX,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(
+    (4 / 28) * typeX,
+    typeY,
+    0,
+    (24 / 28) * typeY,
+    0,
+    (3 / 4) * typeY
+  )
+  vertex(0, (20 / 28) * typeY)
+  bezierVertex(
+    0,
+    (16 / 28) * typeY,
+    (4 / 28) * typeX,
+    (12 / 28) * typeY,
+    typeX / 2,
+    (12 / 28) * typeY
+  )
+  endShape()
+
+  pop()
+}
+
+function zero() {
+  beginShape()
+  vertex(typeX, typeY / 3)
+  vertex(typeX, (2 * typeY) / 3)
+  bezierVertex(typeX, (5 * typeY) / 6, (5 * typeX) / 6, typeY, typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, typeY / 3)
+  bezierVertex(0, typeY / 6, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 6, typeX, typeY / 3)
+  endShape()
+
+  line((2 * typeX) / 3, typeY / 3, typeX / 3, (2 * typeY) / 3)
+}
+
+function letter_underscore() {
+  line(0, typeY, typeX, typeY)
+}
+
+function letter_dash() {
+  line(0, typeY / 2, typeX, typeY / 2)
+}
+
+function letter_question() {
+  beginShape()
+  vertex(0, typeY / 4)
+  bezierVertex(0, typeY / 8, typeX / 6, 0, typeX / 2, 0)
+  bezierVertex((5 * typeX) / 6, 0, typeX, typeY / 8, typeX, typeY / 4)
+  bezierVertex(
+    typeX,
+    typeY / 2,
+    typeX / 2,
+    (12 / 28) * typeY,
+    typeX / 2,
+    (3 / 4) * typeY
+  )
+  endShape()
+
+  line(typeX / 2, (7 * typeY) / 8, typeX / 2, typeY)
+}
+
+function letter_period() {
+  line(typeX / 2, (7 * typeY) / 8, typeX / 2, typeY)
+}
+
+function letter_colon() {
+  line(typeX / 2, typeY / 2 - typeY / 8, typeX / 2, typeY / 2)
+  line(typeX / 2, (7 * typeY) / 8, typeX / 2, typeY)
+}
+
+function letter_semicolon() {
+  line(typeX / 2, typeY / 2 - typeY / 8, typeX / 2, typeY / 2)
+  line(typeX / 2, (7 * typeY) / 8, typeX / 2 - typeX / 4, typeY)
+}
+
+function letter_comma() {
+  line(typeX / 2, (7 * typeY) / 8, typeX / 2 - typeX / 4, typeY)
+}
+
+function letter_exclaim() {
+  line(typeX / 2, 0, typeX / 2, (3 * typeY) / 4)
+
+  line(typeX / 2, (7 * typeY) / 8, typeX / 2, typeY)
+}
+
+function letter_slash() {
+  line(0, typeY, typeX, 0)
+}
+
+function double_quote() {
+  if (doubleQuoteSwitch == 1) {
+    beginShape()
+    vertex(typeX / 3 - SA / 2, typeY / 4)
+    vertex(typeX / 3 - SA / 2, (5 * typeY) / 28)
+    vertex(typeX / 3 - SA / 2, (5 * typeY) / 28 + SA / 2)
+    vertex(typeX / 2 - SA / 2, SA)
+    endShape()
+    beginShape()
+    vertex(typeX / 2 + SA / 2, typeY / 4)
+    vertex(typeX / 2 + SA / 2, (5 * typeY) / 28)
+    vertex(typeX / 2 + SA / 2, (5 * typeY) / 28 + SA / 2)
+    vertex((typeX * 2) / 3 + SA / 2, SA)
+    endShape()
+  } else if (doubleQuoteSwitch == -1) {
+    beginShape()
+    vertex(typeX / 3 - SA / 2, typeY / 4)
+    vertex(typeX / 2 - SA / 2, (typeY * 2) / 28 - SA / 2)
+    vertex(typeX / 2 - SA / 2, (typeY * 2) / 28)
+    vertex(typeX / 2 - SA / 2, 0)
+    endShape()
+    beginShape()
+    vertex(typeX / 2 + SA / 2, typeY / 4)
+    vertex((typeX * 2) / 3 + SA / 2, (typeY * 2) / 28 - SA / 2)
+    vertex((typeX * 2) / 3 + SA / 2, (typeY * 2) / 28)
+    vertex((typeX * 2) / 3 + SA / 2, 0)
+    endShape()
+  }
+  doubleQuoteSwitch *= -1
+}
+
+function single_quote() {
+  if (singleQuoteSwitch == 1) {
+    beginShape()
+    vertex((typeX * 3) / 8 - SA / 2, typeY / 4)
+    vertex((typeX * 3) / 8 - SA / 2, (5 * typeY) / 28)
+    vertex((typeX * 3) / 8 - SA / 2, (5 * typeY) / 28 + SA / 2)
+    vertex((typeX * 5) / 8 - SA / 2, SA)
+    endShape()
+  } else if (singleQuoteSwitch == -1) {
+    beginShape()
+    vertex((typeX * 3) / 8 - SA / 2, typeY / 4)
+    vertex((typeX * 5) / 8 - SA / 2, (typeY * 2) / 28 - SA / 2)
+    vertex((typeX * 5) / 8 - SA / 2, (typeY * 2) / 28)
+    vertex((typeX * 5) / 8 - SA / 2, 0)
+    endShape()
+  }
+  singleQuoteSwitch *= -1
+}
+
+function hash() {
+  beginShape()
+  vertex(typeX / 8, typeY)
+  vertex(typeX / 8, typeY - SA)
+  vertex(typeX / 2, SA)
+  vertex(typeX / 2, 0)
+  endShape()
+  beginShape()
+  vertex(typeX / 2, typeY)
+  vertex(typeX / 2, typeY - SA)
+  vertex((typeX * 7) / 8, SA)
+  vertex((typeX * 7) / 8, 0)
+  endShape()
+
+  line((typeX * 2) / 28, typeY / 3, typeX, typeY / 3)
+  line(0, (typeY * 2) / 3, (26 / 28) * typeX, (typeY * 2) / 3)
+}
+
+function cash() {
+  beginShape()
+  vertex((27 * typeX) / 28, typeY / 4)
+  vertex((27 * typeX) / 28, (13 * typeY) / 56)
+  bezierVertex(
+    (27 * typeX) / 28,
+    (4 * typeY) / 28,
+    (7 * typeX) / 8,
+    0,
+    typeX / 2,
+    0
+  )
+  bezierVertex(
+    typeX / 4,
+    0,
+    typeX / 28,
+    (2 * typeY) / 28,
+    typeX / 28,
+    (11 * typeY) / 56
+  )
+  vertex(typeX / 28, (6 * typeY) / 28)
+  bezierVertex(
+    typeX / 28,
+    (17 * typeY) / 56,
+    typeX / 8,
+    (21 * typeY) / 56,
+    typeX / 3,
+    (12 * typeY) / 28
+  )
+  vertex((20 * typeX) / 28, (29 * typeY) / 56)
+  bezierVertex(
+    (26 * typeX) / 28,
+    (16 * typeY) / 28,
+    typeX,
+    (18 * typeY) / 28,
+    typeX,
+    (41 * typeY) / 56
+  )
+  vertex(typeX, (3 * typeY) / 4)
+  bezierVertex(
+    typeX,
+    (26 * typeY) / 28,
+    (22 * typeX) / 28,
+    typeY,
+    typeX / 2,
+    typeY
+  )
+  bezierVertex(typeX / 4, typeY, 0, (53 * typeY) / 56, 0, (3 * typeY) / 4)
+  vertex(0, (41 * typeY) / 56)
+  endShape()
+
+  line(typeX / 2, -typeY / 16, typeX / 2, (typeY * 17) / 16)
+}
+
+function letter_amp() {
+  beginShape()
+  vertex(typeX, typeY)
+  vertex(typeX, typeY - SA)
+  quadraticVertex(typeX / 8, (typeY * 11) / 28, typeX / 8, (3 * typeY) / 8)
+  bezierVertex(typeX / 8, (3 * typeY) / 8, typeX / 4, 0, (12 / 28) * typeX, 0)
+  bezierVertex(
+    (5 * typeX) / 8,
+    0,
+    (typeX * 2) / 3,
+    typeY / 8,
+    (typeX * 2) / 3,
+    (typeY * 4) / 28
+  )
+  bezierVertex(
+    (typeX * 2) / 3,
+    (typeY * 11) / 28,
+    0,
+    typeY / 2,
+    0,
+    (3 * typeY) / 4
+  )
+  bezierVertex(0, typeY, typeX / 4, typeY, (typeX * 3) / 8, typeY)
+  bezierVertex((typeX * 5) / 8, typeY, typeX, typeY, typeX, typeY / 2)
+  vertex(typeX, typeY / 2)
+  vertex((typeX * 3) / 4, typeY / 2)
+  endShape()
+}
+
+function percentage() {
+  beginShape()
+  vertex(0, typeY)
+  vertex(0, typeY - SA)
+  vertex(typeX, SA)
+  vertex(typeX, 0)
+  endShape()
+
+  beginShape()
+  vertex(typeX / 4, 0)
+  bezierVertex((typeX * 3) / 8, 0, typeX / 2, typeY / 12, typeX / 2, typeY / 6)
+  bezierVertex(
+    typeX / 2,
+    (3 / 12) * typeY,
+    (typeX * 3) / 8,
+    typeY / 3,
+    typeX / 4,
+    typeY / 3
+  )
+  bezierVertex(typeX / 8, typeY / 3, 0, (3 / 12) * typeY, 0, typeY / 6)
+  bezierVertex(0, typeY / 12, typeX / 8, 0, typeX / 4, 0)
+  endShape()
+
+  push()
+  translate(typeX, typeY)
+  rotate(PI)
+  beginShape()
+  vertex(typeX / 4, 0)
+  bezierVertex((typeX * 3) / 8, 0, typeX / 2, typeY / 12, typeX / 2, typeY / 6)
+  bezierVertex(
+    typeX / 2,
+    (3 / 12) * typeY,
+    (typeX * 3) / 8,
+    typeY / 3,
+    typeX / 4,
+    typeY / 3
+  )
+  bezierVertex(typeX / 8, typeY / 3, 0, (3 / 12) * typeY, 0, typeY / 6)
+  bezierVertex(0, typeY / 12, typeX / 8, 0, typeX / 4, 0)
+  endShape()
+  pop()
+}
+
+function equal() {
+  line(0, (typeY * 3) / 8, typeX, (typeY * 3) / 8)
+  line(0, (typeY * 5) / 8, typeX, (typeY * 5) / 8)
+}
+
+function plus() {
+  line(0, typeY / 2, typeX, typeY / 2)
+  line(typeX / 2, typeY / 4, typeX / 2, (typeY * 3) / 4)
+}
+
+function asterisk() {
+  push()
+  translate(typeX / 2, typeY / 2)
+  rotate(float(frameCount) * 0.05)
+  for (var i = 0; i < 5; i++) {
+    rotate((2 * PI) / 5)
+    line(0, 0, 0, typeY / 6)
+  }
+  pop()
+}
+
+function at() {
+  beginShape()
+  vertex((17 / 28) * typeX, typeY)
+  vertex(typeX / 2, typeY)
+  bezierVertex(typeX / 6, typeY, 0, (5 * typeY) / 6, 0, (2 * typeY) / 3)
+  vertex(0, (12 / 28) * typeY)
+  bezierVertex(
+    0,
+    typeY / 4,
+    typeX / 6,
+    (2 / 28) * typeY,
+    typeX / 2,
+    (2 / 28) * typeY
+  )
+  bezierVertex(
+    (5 * typeX) / 6,
+    (2 / 28) * typeY,
+    typeX,
+    typeY / 4,
+    typeX,
+    (12 / 28) * typeY
+  )
+  vertex(typeX, (23 / 28) * typeY)
+  endShape()
+  beginShape()
+  vertex(typeX, (17 / 28) * typeY)
+  bezierVertex(
+    typeX,
+    (21 / 28) * typeY,
+    (3 / 4) * typeX,
+    (24 / 28) * typeY,
+    (16 / 28) * typeX,
+    (24 / 28) * typeY
+  )
+  bezierVertex(
+    (11 / 28) * typeX,
+    (24 / 28) * typeY,
+    (8 / 28) * typeX,
+    (3 / 4) * typeY,
+    (8 / 28) * typeX,
+    (17 / 28) * typeY
+  )
+  bezierVertex(
+    (8 / 28) * typeX,
+    (13 / 28) * typeY,
+    (11 / 28) * typeX,
+    (10 / 28) * typeY,
+    (16 / 28) * typeX,
+    (10 / 28) * typeY
+  )
+  bezierVertex(
+    (3 / 4) * typeX,
+    (10 / 28) * typeY,
+    typeX,
+    (13 / 28) * typeY,
+    typeX,
+    (17 / 28) * typeY
+  )
+  endShape()
+}
+/*
+function at() {
+  beginShape();
+                vertex(typeX/2,typeY-SA);
+        bezierVertex(typeX/6,typeY-SA,  SA,5*typeY/6,  SA,2*typeY/3);
+    vertex(SA,typeY/3);
+        bezierVertex(SA,typeY/6,  typeX/6,SA,  typeX/2,SA);
+    bezierVertex(5*typeX/6,SA,  typeX-SA,typeY/6,  typeX-SA,typeY/3);
+          vertex(typeX-SA, typeY/3);
+    vertex(typeX-SA,3/4*typeY);
+        bezierVertex(typeX-SA,24/28*typeY,	3/4*typeX, 24/28*typeY,  3/4*typeX,3/4*typeY);
+    vertex(3/4*typeX,11/28*typeY);
+        bezierVertex(3/4*typeX,8/28*typeY,	20/28*typeX,6/28*typeY,  typeX/2,6/28*typeY);
+        bezierVertex(12/28*typeX,6/28*typeY,  11/28*typeX,6/28*typeY,  1/3*typeX,1/4*typeY);
+  endShape();
+  beginShape();
+          vertex(typeX/2,11/28*typeY);
+    bezierVertex(18/28*typeX, 11/28*typeY,  3/4*typeX,13/28*typeY,  3/4*typeX,16/28*typeY);
+    bezierVertex(3/4*typeX,19/28*typeY,  18/28*typeX,21/28*typeY,  typeX/2,21/28*typeY);
+    bezierVertex(10/28*typeX,21/28*typeY,  typeX/4,19/28*typeY,  typeX/4,16/28*typeY);
+        bezierVertex(typeX/4,13/28*typeY,  10/28*typeX,11/28*typeY,  typeX/2,11/28*typeY);
+  endShape();
+}
+*/
+function letter_space() {}
